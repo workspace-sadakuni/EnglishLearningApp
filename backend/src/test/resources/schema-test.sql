@@ -1,0 +1,26 @@
+-- テスト実行のたびにテーブルをクリーンな状態にする
+DROP TABLE IF EXISTS words;
+DROP TABLE IF EXISTS categories;
+
+-- カテゴリーテーブル
+CREATE TABLE `categories` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL UNIQUE,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+);
+
+-- 英単語テーブル (今回は使わないが、依存関係のために定義しておく)
+CREATE TABLE `words` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `word` VARCHAR(255) NOT NULL,
+  `meaning` TEXT NOT NULL,
+  `category_id` BIGINT,
+  `image_path` VARCHAR(255),
+  `audio_path` VARCHAR(255),
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL
+);

@@ -1,0 +1,76 @@
+services:
+  # MySQLデータベースサービス
+  db:
+    image: mysql:8.0
+    container_name: english-app-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      # データを永続化
+      - ./mysql/data:/var/lib/mysql
+      # 初期SQLを実行
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    ports:
+      # ホストからの接続用
+      - "3306:3306"
+    networks:
+      - app-network
+
+  # バックエンドサービス (Spring Boot)
+  backend:
+    # build: セクションを削除し、image: を使用する
+    image: maven:3.8.5-openjdk-17-slim
+    container_name: english-app-backend
+    restart: always
+    working_dir: /app # 作業ディレクトリをここで指定
+    depends_on:
+      - db
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./backend:/app
+      - backend-maven-repo:/root/.m2
+      - ./uploads:/app/uploads
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    # コンテナ起動時に実行するコマンドを指定
+    command: mvn spring-boot:run
+
+  # フロントエンドサービス (React + Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      # 開発用のDockerfileを指定
+      dockerfile: Dockerfile.dev
+    container_name: english-app-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      # ホストの80番ポートをコンテナの80番ポートにマッピング
+      # - "80:80"
+      # Viteサーバーバインディング
+      - "5173:5173"
+    volumes:
+      # ホストのソースコードをコンテナにマウント
+      - ./frontend:/app
+      # node_modulesはコンテナ内のものを使う
+      - /app/node_modules
+    networks:
+      - app-network
+
+# コンテナ間通信用のネットワーク
+networks:
+  app-network:
+    driver: bridge
+
+# Mavenリポジトリキャッシュ用の名前付きボリュームを追加
+volumes:
+  backend-maven-repo:

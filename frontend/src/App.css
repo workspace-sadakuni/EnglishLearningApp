@@ -1,0 +1,283 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.margin-top-10 {
+  margin-top: 10px;
+}
+
+.card {
+  /* padding: 2em; */
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.app-container {
+  display: flex;
+}
+
+.main-content {
+  flex-grow: 1; /* 残りの幅をすべて使う */
+  padding: 20px;
+  height: 100vh;
+  overflow-y: auto; /* コンテンツが多い場合にスクロールバーを表示 */
+}
+
+/* 以下Home画面用CSS */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.category-card {
+  display: block;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+/* 以上Home画面用CSS */
+
+.quiz-container {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.quiz-image {
+  max-width: 100%;
+  height: auto;
+  max-height: 300px;
+  margin-top: 20px;
+  border-radius: 8px;
+}
+
+.quiz-audio {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.quiz-navigation {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quiz-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  text-decoration: none; /* for Link */
+}
+
+.quiz-button:hover {
+  background-color: #0056b3;
+}
+
+.quiz-card {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-border);
+  border-radius: 4px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
+
+.meaning-area {
+  min-height: 50px; /* 意味が表示されてもされなくても高さを一定に保つ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.meaning-text {
+  font-size: 1.2em;
+}
+
+.show-meaning-button {
+  background-color: transparent;
+  color: var(--color-primary); /* グローバル変数で定義した色 */
+  border: 1px solid var(--color-primary);
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.show-meaning-button:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* テーブル共通のスタイルとして流用できるように調整 */
+.word-table,
+.category-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.word-table th, .word-table td,
+.category-table th, .category-table td {
+  border: 1px solid var(--color-border);
+  padding: 10px 14px; /* 少し余白を広げる */
+  text-align: left;
+  vertical-align: middle; /* ボタンとの縦位置を揃える */
+}
+
+.word-table thead,
+.category-table thead {
+  background-color: #f8f9fa;
+  font-weight: 500;
+}
+
+.word-table tbody tr:nth-child(even),
+.category-table tbody tr:nth-child(even) {
+  background-color: #fdfdff;
+}
+
+.word-table tbody tr:hover,
+.category-table tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* アクションボタン用のスタイル */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-buttons button,
+.action-buttons a { /* Linkコンポーネントも対象に */
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  text-decoration: none;
+  color: white;
+  display: inline-block; /* aタグのため */
+}
+
+.action-buttons .edit-btn {
+  background-color: #0d6efd; /* var(--color-primary) より少し濃い青 */
+}
+.action-buttons .edit-btn:hover {
+  background-color: #0b5ed7;
+}
+
+.action-buttons .delete-btn {
+  background-color: #dc3545; /* var(--color-danger) より少し濃い赤 */
+}
+.action-buttons .delete-btn:hover {
+  background-color: #bb2d3b;
+}
+
+/* WordListのLinkもボタン風にする */
+.word-table td a {
+  background-color: #6c757d;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+.word-table td a:hover {
+  background-color: #5c636a;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-weight: 500;
+}

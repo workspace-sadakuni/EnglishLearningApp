@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.englishapp.mapper.WordMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.example.englishapp.dto.WordDto">
+        INSERT INTO words (word, meaning, category_id, image_path, audio_path)
+        VALUES (#{word}, #{meaning}, #{categoryId}, #{imagePath}, #{audioPath})
+    </insert>
+
+    <select id="findAll" resultType="com.example.englishapp.dto.WordWithCategoryDto">
+        SELECT
+            w.id,
+            w.word,
+            w.meaning,
+            w.category_id,
+            c.name AS categoryName,
+            w.image_path,
+            w.audio_path,
+            w.created_at,
+            w.updated_at
+        FROM
+            words AS w
+        LEFT JOIN
+            categories AS c ON w.category_id = c.id
+        <!-- 動的なWHERE句を追加 -->
+        <where>
+            <if test="searchTerm != null and searchTerm != ''">
+                (w.word LIKE CONCAT('%', #{searchTerm}, '%')
+                OR w.meaning LIKE CONCAT('%', #{searchTerm}, '%')
+                OR c.name LIKE CONCAT('%', #{searchTerm}, '%'))
+            </if>
+        </where>
+        ORDER BY
+            w.id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAll" resultType="long">
+        SELECT
+            COUNT(*)
+        FROM
+            words AS w
+        LEFT JOIN
+            categories AS c ON w.category_id = c.id
+        <where>
+            <if test="searchTerm != null and searchTerm != ''">
+                (w.word LIKE CONCAT('%', #{searchTerm}, '%')
+                OR w.meaning LIKE CONCAT('%', #{searchTerm}, '%')
+                OR c.name LIKE CONCAT('%', #{searchTerm}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultType="com.example.englishapp.dto.WordWithCategoryDto">
+        SELECT
+            w.id,
+            w.word,
+            w.meaning,
+            w.category_id,
+            c.name AS categoryName,
+            w.image_path,
+            w.audio_path,
+            w.created_at,
+            w.updated_at
+        FROM
+            words AS w
+        LEFT JOIN
+            categories AS c ON w.category_id = c.id
+        WHERE
+            w.id = #{id}
+    </select>
+
+    <select id="findByCategoryId" resultType="com.example.englishapp.dto.WordDto">
+        SELECT * FROM words WHERE category_id = #{categoryId} ORDER BY RAND()
+    </select>
+
+    <update id="update" parameterType="com.example.englishapp.dto.WordDto">
+        UPDATE words
+        <set>
+            <if test="word != null and word != ''">word = #{word},</if>
+            <if test="meaning != null and meaning != ''">meaning = #{meaning},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="imagePath != null">image_path = #{imagePath},</if>
+            <if test="audioPath != null">audio_path = #{audioPath},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM words WHERE id = #{id}
+    </delete>
+
+</mapper>

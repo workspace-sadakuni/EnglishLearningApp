@@ -1,0 +1,47 @@
+# --- 全般的な除外設定 ---
+# OSが生成するファイル
+.DS_Store
+Thumbs.db
+
+# IDEの設定ファイル
+.idea/
+.vscode/
+
+# --- バックエンド関連 ---
+# Mavenのビルド成果物
+backend/target/
+backend/pom.xml.tag
+backend/pom.xml.releaseBackup
+backend/pom.xml.versionsBackup
+backend/release.properties
+
+# ログファイル
+*.log
+
+# --- フロントエンド関連 ---
+# 依存関係パッケージ
+node_modules
+frontend/node_modules/
+# ビルド成果物
+frontend/dist/
+# ローカル環境変数ファイル
+# ローカル環境構築簡易化のため、リモートrepositoryに含めておく。
+# frontend/.env.development
+# frontend/.env.local
+# frontend/.env.*.local
+
+# デバッグログ
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Docker関連 ---
+# データベースのデータファイル (最重要！)
+mysql/data/
+
+# アップロードされたファイル
+uploads/
+
+# ローカル環境変数ファイル(DB接続情報)
+# ローカル環境構築簡易化のため、リモートrepositoryに含めておく。
+# .env

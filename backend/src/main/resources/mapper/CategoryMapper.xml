@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.englishapp.mapper.CategoryMapper">
+
+    <insert id="insertWithName" useGeneratedKeys="true" keyProperty="id" parameterType="com.example.englishapp.dto.CategoryDto">
+        INSERT INTO categories (name)
+        VALUES (#{name})
+    </insert>
+
+    <select id="findById" resultType="com.example.englishapp.dto.CategoryDto">
+        SELECT
+            id,
+            name,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM
+            categories
+        WHERE
+            id = #{id}
+    </select>
+
+    <select id="findAll" resultType="com.example.englishapp.dto.CategoryDto">
+        SELECT
+            id,
+            name,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM
+            categories
+        ORDER BY
+            id DESC
+    </select>
+
+    <update id="update" parameterType="com.example.englishapp.dto.CategoryDto">
+        UPDATE
+            categories
+        SET
+            name = #{name}
+        WHERE
+            id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM categories WHERE id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,29 @@
+-- `english_db` データベースが存在しない場合に作成
+CREATE DATABASE IF NOT EXISTS `english_db`;
+USE `english_db`;
+
+-- カテゴリーテーブル
+CREATE TABLE IF NOT EXISTS `categories` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL UNIQUE,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 英単語テーブル
+CREATE TABLE IF NOT EXISTS `words` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `word` VARCHAR(255) NOT NULL,
+  `meaning` TEXT NOT NULL,
+  `category_id` BIGINT,
+  `image_path` VARCHAR(255),
+  `audio_path` VARCHAR(255),
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 初期データの例 (任意)
+INSERT INTO `categories` (`name`) VALUES ('日常生活'), ('ビジネス'), ('旅行') ON DUPLICATE KEY UPDATE name=name;
