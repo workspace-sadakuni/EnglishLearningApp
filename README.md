@@ -49,7 +49,7 @@ docker-compose down --volumes --rmi all
 > http://localhost:5173
 
 **バックエンド動作確認**  
-> http://localhost/api/categories
+> http://localhost:5173/api/categories
 
 **フロントエンドコンテナに入る**  
 ```
@@ -103,3 +103,9 @@ mvn test -Dtest=CategoryServiceTest#updateCategory_success
   - 例: http://localhost:8080/files/images/xxxxxxxx-xxxx.jpg
 - 音声: http://localhost:8080/files/ + （DBに保存されたaudio_pathの値）
   - 例: http://localhost:8080/files/audios/xxxxxxxx-xxxx.mp3
+
+#### git操作
+ブランチを作成
+```
+git switch -c <新しいブランチ名> <作成元のブランチ名>
+```
