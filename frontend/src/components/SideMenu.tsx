@@ -31,6 +31,11 @@ export const SideMenu: React.FC = () => {
               Words
             </NavLink>
           </li>
+          <li>
+            <NavLink to="/account">
+              Account
+            </NavLink>
+          </li>
         </ul>
         {isAuthenticated && (
           <button onClick={handleLogout}>Logout</button>

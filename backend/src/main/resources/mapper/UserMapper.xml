@@ -7,6 +7,12 @@
         VALUES (#{username}, #{hashedPassword})
     </insert>
 
+    <select id="findById" resultType="com.example.englishapp.dto.UserDto">
+        SELECT id, username, created_at, updated_at
+        FROM users
+        WHERE id = #{id}
+    </select>
+
     <select id="findByUsername" resultType="com.example.englishapp.dto.UserDto">
         SELECT id, username, created_at, updated_at
         FROM users
@@ -18,4 +24,17 @@
         FROM users
         WHERE username = #{username}
     </select>
+
+    <update id="update" parameterType="com.example.englishapp.dto.UserDto">
+        UPDATE users
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
 </mapper>
