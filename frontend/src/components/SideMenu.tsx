@@ -1,8 +1,17 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import './SideMenu.css';
+import { useAuth } from '../context/AuthContext';
 
 export const SideMenu: React.FC = () => {
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+  
   return (
     <aside className="side-menu">
       <nav>
@@ -23,6 +32,9 @@ export const SideMenu: React.FC = () => {
             </NavLink>
           </li>
         </ul>
+        {isAuthenticated && (
+          <button onClick={handleLogout}>Logout</button>
+        )}
       </nav>
     </aside>
   );

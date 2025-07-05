@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { Word } from '../types/Word';
+import { getFileAsBlob } from '../api/fileApi';
 import { getWordsByCategoryId } from '../api/wordApi';
 
 export const QuizPage: React.FC = () => {
@@ -9,6 +10,8 @@ export const QuizPage: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showMeaning, setShowMeaning] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (categoryId) {
@@ -29,10 +32,41 @@ export const QuizPage: React.FC = () => {
     }
   }, [categoryId]);
 
-  const getFileUrl = (path: string | null): string | undefined => {
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-    return path && apiBaseUrl ? `${apiBaseUrl}/files/${path}` : undefined;
-  };
+  // 表示中の単語が変わったら、その単語のファイルを取得するuseEffect
+  useEffect(() => {
+    // 古いBlob URLを解放
+    if (imageUrl) URL.revokeObjectURL(imageUrl);
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    setImageUrl(null);
+    setAudioUrl(null);
+
+    const currentWord = words[currentIndex];
+    if (!currentWord) return;
+
+    const fetchFiles = async () => {
+      try {
+        if (currentWord.imagePath) {
+          const blob = await getFileAsBlob(currentWord.imagePath);
+          setImageUrl(URL.createObjectURL(blob));
+        }
+        if (currentWord.audioPath) {
+          const blob = await getFileAsBlob(currentWord.audioPath);
+          setAudioUrl(URL.createObjectURL(blob));
+        }
+      } catch (error) {
+        console.error("Failed to fetch word's media files.", error);
+      }
+    };
+    
+    fetchFiles();
+
+    // クリーンアップ関数
+    return () => {
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, words]);
 
   const handleNext = () => {
     if (currentIndex < words.length - 1) {
@@ -54,8 +88,6 @@ export const QuizPage: React.FC = () => {
 
   const currentWord = words[currentIndex];
   const isLastWord = currentIndex === words.length - 1;
-  const imageUrl = getFileUrl(currentWord.imagePath);
-  const audioUrl = getFileUrl(currentWord.audioPath);
 
   return (
     <div className="quiz-container">

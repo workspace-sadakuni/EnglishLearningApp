@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.englishapp.mapper.UserMapper">
+
+    <insert id="insert">
+        INSERT INTO users (username, password)
+        VALUES (#{username}, #{hashedPassword})
+    </insert>
+
+    <select id="findByUsername" resultType="com.example.englishapp.dto.UserDto">
+        SELECT id, username, created_at, updated_at
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <select id="findByUsernameWithPassword" resultType="com.example.englishapp.dto.UserDto">
+        SELECT id, username, password, created_at, updated_at
+        FROM users
+        WHERE username = #{username}
+    </select>
+</mapper>

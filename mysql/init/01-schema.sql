@@ -25,5 +25,28 @@ CREATE TABLE IF NOT EXISTS `words` (
   FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- ユーザーテーブル
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(255) NOT NULL UNIQUE,
+  `password` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ログイン履歴テーブル
+CREATE TABLE IF NOT EXISTS `login_history` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT,
+  `username` VARCHAR(255) NOT NULL,
+  `ip_address` VARCHAR(45),
+  `user_agent` TEXT,
+  `login_status` VARCHAR(20) NOT NULL, -- 'SUCCESS', 'FAILURE'
+  `login_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 初期データの例 (任意)
-INSERT INTO `categories` (`name`) VALUES ('日常生活'), ('ビジネス'), ('旅行') ON DUPLICATE KEY UPDATE name=name;
+-- INSERT INTO `categories` (`name`) VALUES ('日常生活'), ('ビジネス'), ('旅行') ON DUPLICATE KEY UPDATE name=name;
