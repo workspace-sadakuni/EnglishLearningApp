@@ -6,6 +6,7 @@ import { MainLayout } from './components/layouts/MainLayout';
 import { ProtectedRoute } from './components/layouts/ProtectedRoute';
 
 // Pages
+import { AccountPage } from './pages/AccountPage';
 import { HomePage } from './pages/HomePage';
 import { CategoryPage } from './pages/CategoryPage';
 import { WordPage } from './pages/WordPage';
@@ -27,6 +28,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/account" element={<AccountPage />} />
             <Route path="/categories" element={<CategoryPage />} />
             <Route path="/words" element={<WordPage />} />
             <Route path="/words/:id/edit" element={<WordEditPage />} />

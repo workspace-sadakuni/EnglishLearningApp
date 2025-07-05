@@ -14,6 +14,13 @@ public interface UserMapper {
     void insert(@Param("username") String username, @Param("hashedPassword") String hashedPassword);
 
     /**
+     * ユーザーIDでユーザーを検索する
+     * @param id ユーザーID
+     * @return ユーザー情報
+     */
+    UserDto findById(@Param("id") Long id);
+
+    /**
      * ユーザー名でユーザーを検索する
      * @param username ユーザー名
      * @return ユーザー情報
@@ -21,9 +28,17 @@ public interface UserMapper {
     UserDto findByUsername(@Param("username") String username);
 
     /**
-     * ユーザー名でユーザーを検索するし、パスワードも取得する
+     * ユーザー名でユーザーを検索し、パスワードも取得する
      * @param username ユーザー名
      * @return ユーザー情報
      */
     UserDto findByUsernameWithPassword(@Param("username") String username);
+
+    /**
+     * ユーザー情報を更新する
+     * @param userDto 更新するユーザー情報
+     * @return 更新件数
+     */
+    int update(UserDto userDto);
+    
 }

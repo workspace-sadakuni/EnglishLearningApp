@@ -3,6 +3,7 @@ package com.example.englishapp.controller;
 import com.example.englishapp.dto.UserDto;
 import com.example.englishapp.dto.request.AuthenticationRequest;
 import com.example.englishapp.dto.request.UserRegistrationRequest;
+import com.example.englishapp.dto.request.UserUpdateRequest;
 import com.example.englishapp.service.UserService;
 import com.example.englishapp.util.JwtUtil;
 import jakarta.validation.Valid;
@@ -10,13 +11,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -56,5 +62,50 @@ public class UserController {
 
         // JWTをレスポンスとして返す
         return ResponseEntity.ok(Map.of("token", jwt));
+    }
+
+    // --- プロフィール取得APIを追加 ---
+    // @AuthenticationPrincipal UserDetails userDetails: このアノテーションを使うと、Spring Securityが現在認証中のユーザーの情報（この場合はUserDetailsオブジェクト）を引数に自動的にインジェクトしてくれます。
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        UserDto user = userService.findByUsername(userDetails.getUsername());
+        return ResponseEntity.ok(user);
+    }
+
+    // --- アカウント更新APIを追加 ---
+    // @AuthenticationPrincipal UserDetails userDetails: このアノテーションを使うと、Spring Securityが現在認証中のユーザーの情報（この場合はUserDetailsオブジェクト）を引数に自動的にインジェクトしてくれます。
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMyProfile(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Valid @RequestBody UserUpdateRequest request
+    ) {
+        // 現在ログイン中のユーザー情報を取得
+        UserDto currentUser = userService.findByUsername(userDetails.getUsername());
+        
+        // Serviceはパスワード付きのDTOを返すように修正した
+        UserDto updatedUserWithPassword = userService.updateUser(currentUser.getId(), request.getUsername(), request.getPassword());
+        
+        // UserDetailsを構築
+        UserDetails newDetails = org.springframework.security.core.userdetails.User
+                .withUsername(updatedUserWithPassword.getUsername())
+                .password(updatedUserWithPassword.getPassword()) // これでnullにならない
+                .authorities(Collections.emptyList())
+                .build();
+        
+        // 新しいJWTを生成
+        String newJwt = jwtUtil.generateToken(newDetails);
+
+        // レスポンス用に、パスワードを含まないDTOを準備
+        UserDto responseUser = new UserDto();
+        responseUser.setId(updatedUserWithPassword.getId());
+        responseUser.setUsername(updatedUserWithPassword.getUsername());
+        responseUser.setCreatedAt(updatedUserWithPassword.getCreatedAt());
+        responseUser.setUpdatedAt(updatedUserWithPassword.getUpdatedAt());
+
+        // 更新後のユーザー情報と新しいトークンを一緒に返す
+        Map<String, Object> response = new HashMap<>();
+        response.put("user", responseUser);
+        response.put("token", newJwt);
+        return ResponseEntity.ok(response);
     }
 }

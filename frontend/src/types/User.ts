@@ -20,3 +20,13 @@ export interface AuthenticationData {
 export interface AuthenticationResponse {
   token: string;
 }
+
+export interface UserUpdateRequest {
+  username?: string;
+  password?: string;
+}
+
+export interface UpdateProfileResponse {
+  user: User;
+  token?: string; // tokenはオプショナル
+}
