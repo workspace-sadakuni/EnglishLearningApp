@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import type { Category } from '../types/Category';
-// import type { Word } from '../types/Word';
 import { getAllCategories } from '../api/categoryApi';
+import { getFileAsBlob } from '../api/fileApi';
 import { getWordById, updateWord, deleteWord } from '../api/wordApi';
 
 export const WordEditPage: React.FC = () => {
@@ -17,10 +17,12 @@ export const WordEditPage: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
 
+  // 表示用のBlob URLを保持するstate
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+  const [existingAudioUrl, setExistingAudioUrl] = useState<string | null>(null);
+
   // Data states for displaying existing data
   const [categories, setCategories] = useState<Category[]>([]);
-  const [existingImage, setExistingImage] = useState<string | null>(null);
-  const [existingAudio, setExistingAudio] = useState<string | null>(null);
   
   // UI states
   const [message, setMessage] = useState('');
@@ -28,43 +30,44 @@ export const WordEditPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true); // 初期ロード中はtrue
 
   useEffect(() => {
-    // カテゴリーと編集対象の単語データを非同期で取得
     const fetchData = async () => {
-      if (!id) {
-        setError('Word ID is missing.');
-        setIsLoading(false);
-        return;
-      }
+      if (!id) return;
       try {
-        // Promise.allでカテゴリーと単語データを並行して取得
         const [catData, wordData] = await Promise.all([
           getAllCategories(),
           getWordById(Number(id)),
         ]);
         
-        // 取得したデータでフォームの初期値を設定
         setCategories(catData);
         setWord(wordData.word);
         setMeaning(wordData.meaning);
         setCategoryId(wordData.categoryId);
-        setExistingImage(wordData.imagePath);
-        setExistingAudio(wordData.audioPath);
 
+        // ファイルパスからBlob URLを生成
+        if (wordData.imagePath) {
+          const blob = await getFileAsBlob(wordData.imagePath);
+          setExistingImageUrl(URL.createObjectURL(blob));
+        }
+        if (wordData.audioPath) {
+          const blob = await getFileAsBlob(wordData.audioPath);
+          setExistingAudioUrl(URL.createObjectURL(blob));
+        }
       } catch (err) {
-        setError('Failed to load word data.');
         console.error(err);
+        setError('Failed to load data.');
       } finally {
         setIsLoading(false);
       }
     };
     fetchData();
-  }, [id]);
 
-  // ファイルのフルURLを生成するヘルパー関数
-  const getFileUrl = (path: string | null): string | undefined => {
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-    return path && apiBaseUrl ? `${apiBaseUrl}/files/${path}` : undefined;
-  };
+    // クリーンアップ関数: コンポーネントがアンマウントされるときにBlob URLを解放
+    return () => {
+      if (existingImageUrl) URL.revokeObjectURL(existingImageUrl);
+      if (existingAudioUrl) URL.revokeObjectURL(existingAudioUrl);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   // フォーム送信時の処理
   const handleSubmit = async (e: React.FormEvent) => {
@@ -162,7 +165,7 @@ export const WordEditPage: React.FC = () => {
 
         <div>
           <label>Current Image: </label>
-          {existingImage ? <img src={getFileUrl(existingImage)} alt="current" style={{ maxWidth: '100px', verticalAlign: 'middle' }}/> : "None"}
+          {existingImageUrl ? <img src={existingImageUrl} alt="current" style={{ maxWidth: '100px', verticalAlign: 'middle' }}/> : "None"}
         </div>
         <div>
           <label htmlFor="image-replace">Replace Image: </label>
@@ -173,7 +176,7 @@ export const WordEditPage: React.FC = () => {
         
         <div>
           <label>Current Audio: </label>
-          {existingAudio ? <audio controls src={getFileUrl(existingAudio)} /> : "None"}
+          {existingAudioUrl ? <audio controls src={existingAudioUrl} /> : "None"}
         </div>
         <div>
           <label htmlFor="audio-replace">Replace Audio: </label>
