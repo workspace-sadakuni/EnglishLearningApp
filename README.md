@@ -44,6 +44,10 @@ docker-compose down -v
 ```
 docker-compose down --volumes --rmi all
 ```
+**ビルドキャッシュの削除**  
+```
+docker builder prune -a -f
+```
 
 **フロントエンド開発環境動作確認**  
 > http://localhost:5173
