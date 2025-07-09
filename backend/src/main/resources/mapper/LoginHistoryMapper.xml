@@ -7,4 +7,43 @@
         VALUES (#{userId}, #{username}, #{ipAddress}, #{userAgent}, #{loginStatus})
     </insert>
 
+    <select id="findByUserId" resultType="com.example.englishapp.dto.LoginHistoryDto">
+        SELECT id, user_id, username, ip_address, user_agent, login_status, login_at
+        FROM login_history
+        WHERE user_id = #{userId}
+        ORDER BY login_at DESC
+    </select>
+
+    <select id="findByUserIdWithFilter" resultType="com.example.englishapp.dto.LoginHistoryDto">
+        SELECT id, user_id, username, ip_address, user_agent, login_status, login_at
+        FROM login_history
+        WHERE user_id = #{userId}
+        <if test="status != null and status != ''">
+            AND login_status = #{status}
+        </if>
+        <if test="from != null">
+            AND login_at &gt;= #{from}
+        </if>
+        <if test="to != null">
+            AND login_at &lt;= #{to}
+        </if>
+        ORDER BY login_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countByUserIdWithFilter" resultType="long">
+        SELECT COUNT(*)
+        FROM login_history
+        WHERE user_id = #{userId}
+        <if test="status != null and status != ''">
+            AND login_status = #{status}
+        </if>
+        <if test="from != null">
+            AND login_at &gt;= #{from}
+        </if>
+        <if test="to != null">
+            AND login_at &lt;= #{to}
+        </if>
+    </select>
+
 </mapper>

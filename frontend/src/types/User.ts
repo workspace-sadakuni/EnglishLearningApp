@@ -30,3 +30,20 @@ export interface UpdateProfileResponse {
   user: User;
   token?: string; // tokenはオプショナル
 }
+
+export interface LoginHistory {
+  id: number;
+  userId: number;
+  username: string;
+  ipAddress: string;
+  userAgent: string;
+  loginStatus: string;
+  loginAt: string;
+}
+
+export interface PagedResult<T> {
+  items: T[];
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+}

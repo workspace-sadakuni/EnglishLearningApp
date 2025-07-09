@@ -36,6 +36,11 @@ export const SideMenu: React.FC = () => {
               Account
             </NavLink>
           </li>
+          <li>
+            <NavLink to="/login-history">
+              Login History
+            </NavLink>
+          </li>
         </ul>
         {isAuthenticated && (
           <button onClick={handleLogout}>Logout</button>
