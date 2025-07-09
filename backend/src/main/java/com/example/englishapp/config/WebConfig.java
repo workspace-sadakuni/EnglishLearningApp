@@ -2,6 +2,7 @@ package com.example.englishapp.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -15,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final String uploadDir = "/app/uploads/";
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         // /files/** というURLへのリクエストを、/app/uploads/ ディレクトリにマッピングする
         // 例: /files/images/foo.jpg -> /app/uploads/images/foo.jpg
         registry.addResourceHandler(resourcePath + "**")

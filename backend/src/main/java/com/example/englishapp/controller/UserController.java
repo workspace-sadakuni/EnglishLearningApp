@@ -108,4 +108,15 @@ public class UserController {
         response.put("token", newJwt);
         return ResponseEntity.ok(response);
     }
+
+    @org.springframework.web.bind.annotation.DeleteMapping("/me")
+    public ResponseEntity<?> deleteMyAccount(@AuthenticationPrincipal UserDetails userDetails) {
+        UserDto currentUser = userService.findByUsername(userDetails.getUsername());
+        boolean deleted = userService.deleteUser(currentUser.getId());
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete user account.");
+        }
+    }
 }
