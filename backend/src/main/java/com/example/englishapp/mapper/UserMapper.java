@@ -41,4 +41,10 @@ public interface UserMapper {
      */
     int update(UserDto userDto);
     
+    /**
+     * ユーザーIDでユーザーを削除する
+     * @param id ユーザーID
+     * @return 削除件数
+     */
+    int deleteById(@Param("id") Long id);
 }

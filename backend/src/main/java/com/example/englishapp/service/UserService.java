@@ -72,6 +72,11 @@ public class UserService {
         return userMapper.findByUsernameWithPassword(finalUsername);
     }
 
+    public boolean deleteUser(Long userId) {
+        int deletedRows = userMapper.deleteById(userId);
+        return deletedRows > 0;
+    }
+
     public UserDto findByUsername(String username) {
         return userMapper.findByUsername(username);
     }

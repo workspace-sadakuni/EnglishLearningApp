@@ -24,3 +24,7 @@ export const updateMyProfile = async (data: UserUpdateRequest): Promise<UpdatePr
   const response = await apiClient.put<UpdateProfileResponse>('/me', data);
   return response.data;
 };
+
+export const deleteMyAccount = async (): Promise<void> => {
+  await apiClient.delete('/me');
+};

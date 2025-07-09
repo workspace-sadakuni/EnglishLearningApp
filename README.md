@@ -1,115 +1,145 @@
-## EnglishLearnigApp
+# EnglishLearningApp
+
 英語を学ぶためのアプリケーション
 
-#### 機能
-- カテゴリー登録機能
-- 英語登録機能（カテゴリーとの紐づけ、画像および音声データも登録可能）
-- 登録された英語の画像や音声データ、意味をカテゴリーごとに確認可能
+## 概要
 
-#### カテゴリー登録画面
-<img width="932" alt="Image" src="https://github.com/user-attachments/assets/c7cb7fc9-93e9-4336-8989-92c8c47b5a11" />
+このアプリケーションは、英語学習をサポートするためのWebアプリケーションです。カテゴリー別に英語の単語やフレーズを管理し、画像や音声データと共に学習できる機能を提供します。
 
-#### 英語登録画面
-<img width="905" alt="Image" src="https://github.com/user-attachments/assets/2246b4d3-de04-41c8-962c-8824d6445d3c" />
+## 機能
 
-#### 英語表示画面
-<img width="830" alt="Image" src="https://github.com/user-attachments/assets/c9788816-f69e-44ff-a180-56b805b1e5ea" />
+- **カテゴリー登録機能**: 学習内容をカテゴリー別に整理
+- **英語登録機能**: カテゴリーとの紐づけ、画像および音声データも登録可能
+- **学習コンテンツ表示**: 登録された英語の画像や音声データ、意味をカテゴリーごとに確認可能
+
+## スクリーンショット
+
+### カテゴリー登録画面
+<img width="932" alt="カテゴリー登録画面" src="https://github.com/user-attachments/assets/c7cb7fc9-93e9-4336-8989-92c8c47b5a11" />
+
+### 英語登録画面
+<img width="905" alt="英語登録画面" src="https://github.com/user-attachments/assets/2246b4d3-de04-41c8-962c-8824d6445d3c" />
+
+### 英語表示画面
+<img width="830" alt="英語表示画面" src="https://github.com/user-attachments/assets/c9788816-f69e-44ff-a180-56b805b1e5ea" />
+
+## 技術スタック
+
+| 項目 | バージョン |
+|------|------------|
+| Node.js | 22.17.0 |
+| React | 19.1.0 |
+| TypeScript | 5.8.3 |
+| Vite | 7.0.0 |
+| Java | 17 |
+| Spring Boot | 3.4.7 |
+| MySQL | 8.0 |
 
 ## 環境構築
 
-#### 前提
-- Docker利用可能であること
+### 前提条件
 
-#### 環境構築手順
-1. Dockerコンテナビルド  
-```
-docker-compose up --build -d
-```
+- Dockerが利用可能であること
 
-#### 環境情報（一部のみ掲載）
-- node.js: 22.17.0  
-- react: 19.1.0  
-- typescript: 5.8.3  
-- vite: 7.0.0  
-- Java: 17  
-- Spring Boot: 3.4.7  
-- MySQL: 8.0  
+### セットアップ手順
 
-#### 備考
-**コンテナ削除**  
-```
+1. **Dockerコンテナのビルドと起動**
+   ```bash
+   docker-compose up --build -d
+   ```
+
+2. **動作確認**
+   - フロントエンド: http://localhost:5173
+   - バックエンドAPI: http://localhost:5173/api/categories
+
+## 開発・運用コマンド
+
+### コンテナ管理
+
+```bash
+# コンテナ削除
 docker-compose down -v
-```
-**キャッシュ、イメージ、コンテナ削除**  
-```
+
+# キャッシュ、イメージ、コンテナ削除
 docker-compose down --volumes --rmi all
-```
-**ビルドキャッシュの削除**  
-```
+
+# ビルドキャッシュの削除
 docker builder prune -a -f
 ```
 
-**フロントエンド開発環境動作確認**  
-> http://localhost:5173
+### ログ監視
 
-**バックエンド動作確認**  
-> http://localhost:5173/api/categories
-
-**フロントエンドコンテナに入る**  
-```
-docker exec -it english-app-frontend bash
-```
-
-**フロントエンドコンテナログ監視**  
-```
+```bash
+# フロントエンドコンテナログ監視
 docker-compose logs -f frontend
-```
 
-**バックエンドコンテナに入る**  
-```
-docker exec -it english-app-backend bash
-```
-
-**バックエンドコンテナログ監視**  
-```
+# バックエンドコンテナログ監視
 docker-compose logs -f backend
 ```
 
-**バックエンドテスト実行**  
-/backendで実行  
-```
-mvn test
-```
-```
-mvn clean test
-```
-backend/target/site/jacoco/index.html  
-にカバレッジが作成される。
+### コンテナ内での操作
 
-**バックエンド特定のテスト実行**  
-/backendで実行  
+```bash
+# フロントエンドコンテナに入る
+docker exec -it english-app-frontend bash
+
+# バックエンドコンテナに入る
+docker exec -it english-app-backend bash
 ```
+
+### テスト実行
+
+バックエンドディレクトリ（`/backend`）で実行してください。
+
+```bash
+# 全テスト実行
+mvn test
+
+# クリーンビルド + テスト実行
+mvn clean test
+
+# 特定のテストクラス実行
 mvn test -Dtest=CategoryServiceTest
-```
-```
+
+# 特定のパターンのテスト実行
 mvn test -Dtest=*ServiceTest
-```
-```
 mvn test -Dtest=Category*
-```
-```
+
+# 特定のテストメソッド実行
 mvn test -Dtest=CategoryServiceTest#updateCategory_success
 ```
 
-**英単語登録ファイルへのアクセスを確認**  
-ブラウザで、以下のURLにアクセスしてファイルが表示・再生されるか確認可能
-- 画像: http://localhost:8080/files/ + （DBに保存されたimage_pathの値）
-  - 例: http://localhost:8080/files/images/xxxxxxxx-xxxx.jpg
-- 音声: http://localhost:8080/files/ + （DBに保存されたaudio_pathの値）
-  - 例: http://localhost:8080/files/audios/xxxxxxxx-xxxx.mp3
+#### テストカバレッジ
 
-#### git操作
-ブランチを作成
+テスト実行後、以下のファイルでカバレッジを確認できます：
 ```
+backend/target/site/jacoco/index.html
+```
+
+## ファイルアクセス確認
+
+ブラウザで以下のURLにアクセスしてファイルが表示・再生されるか確認可能です：
+
+### 画像ファイル
+```
+http://localhost:8080/files/ + （DBに保存されたimage_pathの値）
+```
+例: `http://localhost:8080/files/images/xxxxxxxx-xxxx.jpg`
+
+### 音声ファイル
+```
+http://localhost:8080/files/ + （DBに保存されたaudio_pathの値）
+```
+例: `http://localhost:8080/files/audios/xxxxxxxx-xxxx.mp3`
+
+## Git操作
+
+### ブランチ作成
+
+```bash
 git switch -c <新しいブランチ名> <作成元のブランチ名>
 ```
+
+## ライセンス
+
+このプロジェクトのライセンス情報については、プロジェクト管理者にお問い合わせください。

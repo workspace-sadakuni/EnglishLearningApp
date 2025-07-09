@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { isAxiosError } from 'axios';
-import { getMyProfile, updateMyProfile } from '../api/userApi';
+import { getMyProfile, updateMyProfile, deleteMyAccount } from '../api/userApi';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export const AccountPage: React.FC = () => {
   const [currentUsername, setCurrentUsername] = useState('');
@@ -12,7 +13,8 @@ export const AccountPage: React.FC = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // ページ読み込み時に現在のプロフィール情報を取得
@@ -65,6 +67,26 @@ export const AccountPage: React.FC = () => {
     }
   };
 
+  // アカウント削除処理
+  const handleDeleteAccount = async () => {
+    if (!window.confirm('Are you sure you want to delete your account?\nThis action cannot be undone.')) return;
+    setIsLoading(true);
+    setError('');
+    try {
+      await deleteMyAccount();
+      logout();
+      navigate('/login');
+    } catch (err) {
+      if (isAxiosError(err)) {
+        setError(err.response?.data?.message || 'Failed to delete account.');
+      } else {
+        setError('Failed to delete account.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div>
       <h1>My Account</h1>
@@ -96,6 +118,10 @@ export const AccountPage: React.FC = () => {
             {isLoading ? 'Updating...' : 'Update Account'}
           </button>
         </form>
+        <hr />
+        <button onClick={handleDeleteAccount} className="delete-button" style={{ color: 'red', marginTop: '1em' }} disabled={isLoading}>
+          Delete Account
+        </button>
       </div>
     </div>
   );
