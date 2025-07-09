@@ -14,6 +14,7 @@ import { WordEditPage } from './pages/WordEditPage';
 import { QuizPage } from './pages/QuizPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import LoginHistoryPage from './pages/LoginHistoryPage';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/words" element={<WordPage />} />
             <Route path="/words/:id/edit" element={<WordEditPage />} />
             <Route path="/quiz/:categoryId" element={<QuizPage />} />
+            <Route path="/login-history" element={<LoginHistoryPage />} />
           </Route>
         </Route>
 

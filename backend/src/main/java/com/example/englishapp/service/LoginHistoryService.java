@@ -33,6 +33,18 @@ public class LoginHistoryService {
         loginHistoryMapper.insert(history);
     }
 
+    public java.util.List<LoginHistoryDto> getLoginHistoryByUserId(Long userId) {
+        return loginHistoryMapper.findByUserId(userId);
+    }
+
+    public com.example.englishapp.dto.PagedResult<LoginHistoryDto> getLoginHistoryByUserIdWithFilter(Long userId, String status, java.time.LocalDateTime from, java.time.LocalDateTime to, int page, int size) {
+        int offset = (page - 1) * size;
+        java.util.List<LoginHistoryDto> items = loginHistoryMapper.findByUserIdWithFilter(userId, status, from, to, offset, size);
+        long totalItems = loginHistoryMapper.countByUserIdWithFilter(userId, status, from, to);
+        int totalPages = (int) Math.ceil((double) totalItems / size);
+        return new com.example.englishapp.dto.PagedResult<>(items, totalItems, totalPages, page);
+    }
+
     private String getClientIp(HttpServletRequest request) {
         String remoteAddr = "";
         if (request != null) {

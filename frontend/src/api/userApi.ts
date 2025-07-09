@@ -1,5 +1,5 @@
 import apiClient from './apiClient';
-import type { AuthenticationData, AuthenticationResponse, UpdateProfileResponse, User } from '../types/User'; // User型を定義
+import type { AuthenticationData, AuthenticationResponse, UpdateProfileResponse, User, LoginHistory, PagedResult } from '../types/User'; // User型を定義
  // User型を定義
 // User型を定義
 import type { UserRegistrationData, UserUpdateRequest } from '../types/User'; // 登録用データ型も定義
@@ -27,4 +27,17 @@ export const updateMyProfile = async (data: UserUpdateRequest): Promise<UpdatePr
 
 export const deleteMyAccount = async (): Promise<void> => {
   await apiClient.delete('/me');
+};
+
+export interface LoginHistoryQuery {
+  page?: number;
+  size?: number;
+  status?: string;
+  from?: string;
+  to?: string;
+}
+
+export const getMyLoginHistory = async (params: LoginHistoryQuery = {}): Promise<PagedResult<LoginHistory>> => {
+  const response = await apiClient.get<PagedResult<LoginHistory>>('/me/login-history', { params });
+  return response.data;
 };
