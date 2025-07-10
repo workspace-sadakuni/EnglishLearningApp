@@ -1,7 +1,6 @@
 package com.example.englishapp.mapper;
 
 import com.example.englishapp.dto.CategoryDto;
-import com.example.englishapp.mapper.CategoryMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
