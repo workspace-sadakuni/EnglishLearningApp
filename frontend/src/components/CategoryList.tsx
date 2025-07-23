@@ -96,8 +96,8 @@ export const CategoryList: React.FC<CategoryListProps> = ({ keyForRemount }) => 
           ) : (
             categories.map((category) => (
               <tr key={category.id}>
-                <td>{category.name}</td>
-                <td>
+                <td data-label="Category Name">{category.name}</td>
+                <td data-label="Actions">
                   <div className="action-buttons"> {/* ボタンをグループ化 */}
                     <button onClick={() => handleEditClick(category)} className="edit-btn">Edit</button>
                     <button onClick={() => handleDeleteClick(category)} className="delete-btn">Delete</button>
