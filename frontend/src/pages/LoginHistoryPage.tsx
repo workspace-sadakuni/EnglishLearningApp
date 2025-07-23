@@ -21,8 +21,8 @@ const INTERVALS = [
 // JST値として表示する関数
 const toJST = (dt: string) => {
   if (!dt) return '';
-  const jstDate = new Date(dt);
-  jstDate.setHours(jstDate.getHours() + 9);
+  // 文字列に'Z'を付与してUTCであることを明示し、JSTに変換
+  const jstDate = new Date(dt + 'Z');
   return jstDate.toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
 };
 
@@ -40,8 +40,8 @@ function aggregateHistory(history: LoginHistory[], interval: string) {
   };
   const map = new Map<string, number>();
   for (const h of sorted) {
-    const d = new Date(h.loginAt);
-    d.setHours(d.getHours() + 9); // JST補正
+    // 文字列に'Z'を付与してUTCであることを明示
+    const d = new Date(h.loginAt + 'Z');
     let key = '';
     if (interval === 'week') {
       key = format(d); // 時間単位
@@ -55,8 +55,8 @@ function aggregateHistory(history: LoginHistory[], interval: string) {
   for (const [label, count] of map.entries()) {
     result.push({ label, count });
   }
-  // ラベル昇順
-  result.sort((a, b) => a.label.localeCompare(b.label));
+  // ラベル昇順 (日付としてソート)
+  result.sort((a, b) => new Date(a.label).getTime() - new Date(b.label).getTime());
   return result;
 }
 

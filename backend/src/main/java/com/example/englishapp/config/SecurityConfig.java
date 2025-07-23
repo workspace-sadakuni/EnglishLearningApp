@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -35,8 +36,9 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable()) // CSRFを無効化（APIではCSRFは不要）
             .authorizeHttpRequests(authorize -> authorize
-                // 登録とログインAPIは認証不要
-                .requestMatchers("/api/register", "/api/login").permitAll()
+                // 登録、ログイン、ファイルアクセス、OPTIONSメソッドは認証不要
+                .requestMatchers("/api/register", "/api/login", "/files/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // その他のリクエストはすべて認証が必要
                 .anyRequest().authenticated()
             )
@@ -52,7 +54,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // 許可するオリジン（フロントエンドのURL）を指定
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        // configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.addAllowedOriginPattern("*"); // 開発用: 全てのオリジンを許可
         // 許可するHTTPメソッドを指定
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // 許可するリクエストヘッダーを指定

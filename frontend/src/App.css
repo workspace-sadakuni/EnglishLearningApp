@@ -282,3 +282,108 @@
 .pagination span {
   font-weight: 500;
 }
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+    padding: 0;
+  }
+  .main-content {
+    padding: 15px; /* モバイルでは少し余白を狭く */
+    width: 100%;
+    height: auto;
+    box-sizing: border-box; /* paddingを含めてwidth 100%にする */
+  }
+  .card {
+    padding: 16px; /* カードの余白も調整 */
+  }
+
+  /* フォーム要素の調整 */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+
+  button, .button-link {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    min-height: 44px; /* タップしやすい高さを確保 */
+    box-sizing: border-box;
+    color: #000; /* ボタンの文字色を黒に設定 */
+  }
+
+  .action-buttons {
+    justify-content: center; /* ボタンを中央揃えに */
+  }
+
+  .action-buttons button, .action-buttons a {
+    flex-grow: 1; /* ボタンの幅を均等に */
+    text-align: center;
+  }
+
+  .word-table, .category-table {
+    font-size: 0.95em;
+    /* テーブルのレスポンシブ対応 */
+    border: none; /* カード化するのでテーブル自体のボーダーは不要に */
+  }
+  .word-table thead, .category-table thead {
+    display: none; /* モバイルではヘッダーを隠す */
+  }
+  .word-table tr, .category-table tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .word-table td, .category-table td {
+    display: block;
+    text-align: right; /* 値を右寄せに */
+    padding-left: 50%; /* ラベルを置くスペースを確保 */
+    position: relative;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .word-table td:last-child, .category-table td:last-child {
+    border-bottom: none;
+  }
+  .word-table td::before, .category-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: bold;
+  }
+
+  /* 各テーブルのラベルを設定 */
+  .category-table td:nth-of-type(1)::before { content: "Category Name"; }
+  .category-table td:nth-of-type(2)::before { content: "Actions"; }
+
+  .word-table td:nth-of-type(1)::before { content: "Word"; }
+  .word-table td:nth-of-type(2)::before { content: "Meaning"; }
+  .word-table td:nth-of-type(3)::before { content: "Category"; }
+  .word-table td:nth-of-type(4)::before { content: "Actions"; }
+
+  .pagination {
+    flex-direction: column;
+    gap: 10px; /* 少し間隔を広げる */
+  }
+
+  .pagination button {
+    width: 80%;
+    margin: 0 auto;
+  }
+}

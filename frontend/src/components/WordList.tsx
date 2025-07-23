@@ -115,10 +115,10 @@ export const WordList: React.FC<WordListProps> = ({ keyForRemount }) => {
             // データがある場合の表示
             pagedResult.items.map((word) => (
               <tr key={word.id}>
-                <td>{word.word}</td>
-                <td>{word.meaning}</td>
-                <td>{word.categoryName || 'N/A'}</td>
-                <td>
+                <td data-label="Word">{word.word}</td>
+                <td data-label="Meaning">{word.meaning}</td>
+                <td data-label="Category">{word.categoryName || 'N/A'}</td>
+                <td data-label="Actions">
                   <div className="action-buttons">
                     <Link to={`/words/${word.id}/edit`} className="edit-btn">Edit</Link>
                   </div>
