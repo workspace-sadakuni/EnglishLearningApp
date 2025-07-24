@@ -1,0 +1,607 @@
+# yaml-language-server: $schema=https://json-schema.org/draft/2020-12/schema
+openapi: 3.0.0
+info:
+  title: English Learning App API
+  description: API documentation for the English Learning App.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Local Development Server
+tags:
+  - name: Authentication
+    description: User authentication and registration
+  - name: Users
+    description: User management operations
+  - name: Categories
+    description: Category management operations
+  - name: Words
+    description: Word management operations
+  - name: Files
+    description: File serving operations
+  - name: Login History
+    description: User login history
+security:
+  - bearerAuth: []
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '409':
+          description: User with this username already exists
+  /auth/login:
+    post:
+      summary: Authenticate user and get JWT token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+        '401':
+          description: Invalid credentials
+  /users/me:
+    get:
+      summary: Get current authenticated user's information
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: Unauthorized
+    put:
+      summary: Update current authenticated user's information
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: User information updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: Unauthorized
+  /categories:
+    get:
+      summary: Get all categories
+      tags:
+        - Categories
+      responses:
+        '200':
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryDto'
+    post:
+      summary: Create a new category
+      tags:
+        - Categories
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryCreateRequest'
+      responses:
+        '200':
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDto'
+        '401':
+          description: Unauthorized
+        '409':
+          description: Category with this name already exists
+  /categories/{id}:
+    get:
+      summary: Get a category by ID
+      tags:
+        - Categories
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: ID of the category to retrieve
+      responses:
+        '200':
+          description: Category details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDto'
+        '404':
+          description: Category not found
+    put:
+      summary: Update an existing category
+      tags:
+        - Categories
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: ID of the category to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryDto'
+      responses:
+        '200':
+          description: Category updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDto'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Category not found
+        '409':
+          description: Category with this name already exists
+    delete:
+      summary: Delete a category by ID
+      tags:
+        - Categories
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: ID of the category to delete
+      responses:
+        '204':
+          description: Category deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Category not found
+  /words:
+    get:
+      summary: Get all words with optional filtering and pagination
+      tags:
+        - Words
+      parameters:
+        - in: query
+          name: categoryId
+          schema:
+            type: integer
+            format: int64
+          required: false
+          description: Filter words by category ID
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+          required: false
+          description: Page number (0-indexed)
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 10
+          required: false
+          description: Number of items per page
+      responses:
+        '200':
+          description: List of words
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResultOfWordWithCategoryDto'
+    post:
+      summary: Create a new word with optional image and audio files
+      tags:
+        - Words
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                word:
+                  type: string
+                  description: The English word
+                meaning:
+                  type: string
+                  description: The meaning of the word
+                categoryId:
+                  type: integer
+                  format: int64
+                  description: The ID of the category this word belongs to
+                imageFile:
+                  type: string
+                  format: binary
+                  description: Optional image file for the word
+                audioFile:
+                  type: string
+                  format: binary
+                  description: Optional audio file for the word
+      responses:
+        '200':
+          description: Word created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordDto'
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+  /words/{id}:
+    get:
+      summary: Get a word by ID
+      tags:
+        - Words
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: ID of the word to retrieve
+      responses:
+        '200':
+          description: Word details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordDto'
+        '404':
+          description: Word not found
+    put:
+      summary: Update an existing word with optional image and audio files
+      tags:
+        - Words
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: ID of the word to update
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                word:
+                  type: string
+                  description: The English word
+                meaning:
+                  type: string
+                  description: The meaning of the word
+                categoryId:
+                  type: integer
+                  format: int64
+                  description: The ID of the category this word belongs to
+                imageFile:
+                  type: string
+                  format: binary
+                  description: Optional new image file for the word
+                audioFile:
+                  type: string
+                  format: binary
+                  description: Optional new audio file for the word
+      responses:
+        '200':
+          description: Word updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordDto'
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Word not found
+    delete:
+      summary: Delete a word by ID
+      tags:
+        - Words
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: ID of the word to delete
+      responses:
+        '204':
+          description: Word deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Word not found
+  /files/{type}/{filename}:
+    get:
+      summary: Retrieve a file (image or audio)
+      tags:
+        - Files
+      parameters:
+        - in: path
+          name: type
+          schema:
+            type: string
+            enum: [images, audios]
+          required: true
+          description: Type of file (images or audios)
+        - in: path
+          name: filename
+          schema:
+            type: string
+          required: true
+          description: Name of the file to retrieve
+      responses:
+        '200':
+          description: File content
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+            audio/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: File not found
+  /login-history:
+    get:
+      summary: Get user login history with pagination
+      tags:
+        - Login History
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+          required: false
+          description: Page number (0-indexed)
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 10
+          required: false
+          description: Number of items per page
+      responses:
+        '200':
+          description: List of login history entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResultOfLoginHistoryDto'
+        '401':
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+    UserRegistrationRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    AuthenticationRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    AuthenticationResponse:
+      type: object
+      properties:
+        jwt:
+          type: string
+    UserUpdateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    CategoryDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    CategoryCreateRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    WordDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        word:
+          type: string
+        meaning:
+          type: string
+        categoryId:
+          type: integer
+          format: int64
+        imagePath:
+          type: string
+        audioPath:
+          type: string
+    WordWithCategoryDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        word:
+          type: string
+        meaning:
+          type: string
+        categoryId:
+          type: integer
+          format: int64
+        categoryName:
+          type: string
+        imagePath:
+          type: string
+        audioPath:
+          type: string
+    LoginHistoryDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        username:
+          type: string
+        ipAddress:
+          type: string
+        userAgent:
+          type: string
+        loginStatus:
+          type: string
+        loginAt:
+          type: string
+          format: date-time
+    PagedResultOfWordWithCategoryDto:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/WordWithCategoryDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        number:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+    PagedResultOfLoginHistoryDto:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/LoginHistoryDto'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        number:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
