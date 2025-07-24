@@ -47,12 +47,15 @@
 
 ### セットアップ手順
 
-1. **Dockerコンテナのビルドと起動**
+1. **VITE_API_BASE_URLの値を自身のPCであるIPアドレスに変更**  
+/frontend/.env.developmentファイル内「VITE_API_BASE_URL」の値をPCのIPアドレスに変更
+
+2. **Dockerコンテナのビルドと起動**
    ```bash
    docker-compose up --build -d
    ```
 
-2. **動作確認**
+3. **動作確認**
    - フロントエンド: http://localhost:5173
    - バックエンドAPI: http://localhost:5173/api/categories
 
